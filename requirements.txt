@@ -1,0 +1,10 @@
+opencv-python
+speechrecognition
+pyaudio
+google-generativeai
+keyboard
+gTTS
+playsound
+Flask
+SocketIO
+re

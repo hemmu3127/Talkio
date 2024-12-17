@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech & Image Recognition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        header h1 {
+            font-size: 36px;
+            font-weight: 600;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .start-btn {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .start-btn:hover {
+            background-color: #45a049;
+        }
+
+        .end-btn {
+            background-color: #f44336;
+            color: #fff;
+            cursor: not-allowed;
+        }
+
+        .end-btn:disabled {
+            background-color: #ccc;
+        }
+
+        .status {
+            font-size: 16px;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        footer strong {
+            color: #333;
+        }
+
+        .query-response-container {
+            margin-top: 30px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        .query-response-container h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .query-response-container p {
+            font-size: 18px;
+            color: #555;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to Speech to Speech Bot</h1>
+            <p>Start your experience with the buttons below</p>
+        </header>
+
+        <div class="button-container">
+            <button id="start-btn" class="button start-btn">Start Process</button>
+            <button id="end-btn" class="button end-btn" disabled>End Process</button>
+        </div>
+
+        <div id="status-container" class="status">
+            <p id="microphone-status">Microphone: Not Activated</p>
+            <p id="webcam-status">Webcam: Not Activated</p>
+        </div>
+
+        <div id="query-response-container" class="query-response-container">
+            <h3>Speech Query:</h3>
+            <p id="speech-query">N/A</p>
+
+            <h3>Gemini Response:</h3>
+            <p id="gemini-response">N/A</p>
+        </div>
+
+        <footer>
+            <p>Developed by <strong>HEMACHANDIRAN M</strong></p>
+            <p>NITPY <strong>ROLL NO CS21B1015</strong></p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('start-btn').addEventListener('click', function() {
+            fetch('/start', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('end-btn').disabled = false;
+                    document.getElementById('microphone-status').textContent = 'Microphone: Activated';
+                    document.getElementById('webcam-status').textContent = 'Webcam: Activated';
+                    alert("Process Started: Webcam and Microphone Activated!");
+                });
+        });
+
+        document.getElementById('end-btn').addEventListener('click', function() {
+            fetch('/end', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('end-btn').disabled = true;
+                    document.getElementById('microphone-status').textContent = 'Microphone: Not Activated';
+                    document.getElementById('webcam-status').textContent = 'Webcam: Not Activated';
+                    alert("Process Ended: Webcam and Microphone Stopped!");
+                });
+        });
+
+        function updateQueryResponse(query, response) {
+            document.getElementById('speech-query').textContent = query;
+            document.getElementById('gemini-response').textContent = response;
+        }
+
+        setTimeout(() => {
+            updateQueryResponse('What is the weather today?', 'The weather is sunny with a chance of rain.');
+        }, 5000);  s
+    </script>
+    <script>
+        const socket = io();  
+    
+        socket.on('query_response', function(data) {
+            const queryElement = document.getElementById('speech-query');
+            const responseElement = document.getElementById('gemini-response');
+    
+            queryElement.innerText = data.query;
+            responseElement.innerText = data.response;
+        });
+    
+        socket.on('status_update', function(data) {
+            alert(data.message); 
+        });
+    </script>
+    
+</body>
+</html>
