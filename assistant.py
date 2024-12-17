@@ -10,7 +10,7 @@ from flask_socketio import SocketIO, emit
 from gtts import gTTS
 import google.generativeai as genai
 
-genai.configure(api_key='AIzaSyDlDLNXXLb7XQK8zLwGCpt2BwSjRlcbq3k')
+genai.configure(api_key='YOUR KEY')
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
 captured_image = None
